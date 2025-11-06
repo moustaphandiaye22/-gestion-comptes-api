@@ -7,10 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class admins extends Model
 {
-
     use HasFactory;
     public $incrementing = false;
     protected $keyType = 'string';
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\AdminsFactory::new();
+    }
 
     protected $fillable = [
         'prenom',

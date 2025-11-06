@@ -18,9 +18,10 @@ class ClientsFactory extends Factory
    public function definition(): array
    {
        return [
+           'id' => \Illuminate\Support\Str::uuid()->toString(),
            'nom' => fake()->lastName(),
            'prenom' => fake()->firstName(),
-           'date_naissance' => fake()->date(),
+           'datenaissance' => fake()->date(),
            'adresse' => fake()->address(),
            'telephone' => '+221' . fake()->numerify('77#######'),
            'cni' => fake()->unique()->numerify('1############'),

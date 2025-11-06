@@ -17,12 +17,12 @@ class TransactionsFactory extends Factory
   public function definition(): array
    {
        return [
-           'type_transaction' => fake()->randomElement(['depot', 'retrait']),
+           'reference' => 'TXN-' . date('Y') . '-' . strtoupper(fake()->bothify('??????')),
+           'statut' => fake()->randomElement(['en_attente', 'validee', 'annulee']),
+           'type' => fake()->randomElement(['depot', 'retrait', 'virement', 'frais']),
            'montant' => fake()->randomFloat(2, 1000, 10000),
            'description' => fake()->sentence(),
            'date_transaction' => now(),
-           'devise' => 'XOF',
-           'statut' => 'validee',
        ];
    }
 

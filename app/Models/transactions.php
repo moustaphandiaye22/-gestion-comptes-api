@@ -9,6 +9,12 @@ use Illuminate\Support\Str;
 class transactions extends Model
 {
     use HasFactory;
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\TransactionsFactory::new();
+    }
+
     protected static function boot()
    {
        parent::boot();

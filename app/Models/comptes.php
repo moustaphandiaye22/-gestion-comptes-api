@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Models\Scopes\ActiveScope;
 
 class comptes extends Model
 {
@@ -12,6 +13,11 @@ class comptes extends Model
     public $incrementing = false;
    protected $keyType = 'string';
    protected $appends = ['solde'];
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\ComptesFactory::new();
+    }
 
 
    protected static function boot()
@@ -28,11 +34,44 @@ class comptes extends Model
 
 
        static::creating(function ($model) {
-           if (empty($model->numeroCompte)) {
+           if (empty($model->numero_compte)) {
                // Exemple : CPT-2025-XXXXX
-               $model->numeroCompte = 'CPT-' . date('Y') . '-' . strtoupper(Str::random(6));
+               $model->numero_compte = 'CPT-' . date('Y') . '-' . strtoupper(Str::random(6));
            }
        });
+       static::addGlobalScope(new ActiveScope());
+   }
+
+     public function scopeFilterByType($query, $type)
+   {
+       if (!empty($type)) {
+           $query->where('type', $type);
+       }
+       return $query;
+   }
+   
+   public function scopeSearch($query, $search)
+   {
+       if ($search) {
+           return $query->where('titulaire', 'LIKE', '%' . $search . '%')
+               ->orWhere('numero_compte', 'LIKE', '%' . $search . '%');
+       }
+       return $query;
+   }
+
+   public function scopeSortAndOrder($query, $sort, $order)      
+    {
+        $sort = $sort ?: 'created_at';
+       $order = in_array(strtolower($order), ['asc', 'desc']) ? $order : 'desc';
+       return $query->orderBy($sort, $order); 
+    }
+
+       public function scopePaginatePageAndLimit($query, $page, $limit)
+   {
+       $page = max(1, (int)$page);
+       $limit = min($limit ?: 10, 100);
+       $offset = ($page - 1) * $limit;
+       return $query->skip($offset)->take($limit);
    }
 
 
@@ -46,7 +85,7 @@ class comptes extends Model
 
    public function transactions()
    {
-       return $this->hasMany(transactions::class);
+       return $this->hasMany(transactions::class, 'compte_id');
    }
 
 
