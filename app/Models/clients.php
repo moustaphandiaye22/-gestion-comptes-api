@@ -12,6 +12,11 @@ class clients extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
+    protected static function newFactory()
+    {
+        return \Database\Factories\ClientsFactory::new();
+    }
+
 
     protected $fillable = [
         'prenom',
